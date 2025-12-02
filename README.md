@@ -373,7 +373,7 @@ After training:
 
 ## Contact
 
-For questions or issues: vntan.work@gmail.com
+For questions or issues: pmtriet23@clc.fitus.edu.vn
 
 ---
 
