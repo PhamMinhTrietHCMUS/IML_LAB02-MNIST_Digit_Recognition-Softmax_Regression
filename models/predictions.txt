@@ -1,0 +1,143 @@
+Sample Predictions
+============================================================
+
+Sample 1:
+  True Label: 1
+  Prediction: 1
+  Confidence: 0.9130
+  Correct: Yes
+  Probabilities: ['0.0000', '0.9130', '0.0147', '0.0190', '0.0006', '0.0011', '0.0003', '0.0271', '0.0197', '0.0045']
+
+Sample 2:
+  True Label: 2
+  Prediction: 2
+  Confidence: 0.9961
+  Correct: Yes
+  Probabilities: ['0.0000', '0.0002', '0.9961', '0.0026', '0.0000', '0.0000', '0.0002', '0.0000', '0.0008', '0.0000']
+
+Sample 3:
+  True Label: 3
+  Prediction: 5
+  Confidence: 0.6881
+  Correct: No
+  Probabilities: ['0.0050', '0.0014', '0.0014', '0.0712', '0.0008', '0.6881', '0.0335', '0.0001', '0.1815', '0.0170']
+
+Sample 4:
+  True Label: 6
+  Prediction: 6
+  Confidence: 0.8583
+  Correct: Yes
+  Probabilities: ['0.0046', '0.0011', '0.0488', '0.0047', '0.0220', '0.0320', '0.8583', '0.0169', '0.0009', '0.0106']
+
+Sample 5:
+  True Label: 6
+  Prediction: 6
+  Confidence: 0.9970
+  Correct: Yes
+  Probabilities: ['0.0014', '0.0000', '0.0006', '0.0000', '0.0000', '0.0009', '0.9970', '0.0000', '0.0001', '0.0000']
+
+Sample 6:
+  True Label: 2
+  Prediction: 6
+  Confidence: 0.5149
+  Correct: No
+  Probabilities: ['0.0019', '0.0000', '0.4803', '0.0005', '0.0001', '0.0021', '0.5149', '0.0000', '0.0001', '0.0000']
+
+Sample 7:
+  True Label: 4
+  Prediction: 4
+  Confidence: 0.9891
+  Correct: Yes
+  Probabilities: ['0.0000', '0.0002', '0.0002', '0.0000', '0.9891', '0.0001', '0.0022', '0.0028', '0.0005', '0.0049']
+
+Sample 8:
+  True Label: 1
+  Prediction: 1
+  Confidence: 0.9801
+  Correct: Yes
+  Probabilities: ['0.0000', '0.9801', '0.0059', '0.0041', '0.0002', '0.0010', '0.0009', '0.0042', '0.0025', '0.0012']
+
+Sample 9:
+  True Label: 3
+  Prediction: 3
+  Confidence: 0.8135
+  Correct: Yes
+  Probabilities: ['0.0002', '0.0001', '0.0004', '0.8135', '0.0007', '0.0270', '0.0000', '0.0044', '0.0045', '0.1492']
+
+Sample 10:
+  True Label: 4
+  Prediction: 4
+  Confidence: 0.9859
+  Correct: Yes
+  Probabilities: ['0.0002', '0.0000', '0.0001', '0.0000', '0.9859', '0.0006', '0.0049', '0.0013', '0.0016', '0.0054']
+
+Sample 11:
+  True Label: 8
+  Prediction: 8
+  Confidence: 0.9649
+  Correct: Yes
+  Probabilities: ['0.0023', '0.0011', '0.0076', '0.0011', '0.0000', '0.0166', '0.0002', '0.0000', '0.9649', '0.0062']
+
+Sample 12:
+  True Label: 7
+  Prediction: 7
+  Confidence: 0.9364
+  Correct: Yes
+  Probabilities: ['0.0001', '0.0000', '0.0001', '0.0003', '0.0001', '0.0004', '0.0000', '0.9364', '0.0002', '0.0624']
+
+Sample 13:
+  True Label: 6
+  Prediction: 6
+  Confidence: 0.9985
+  Correct: Yes
+  Probabilities: ['0.0000', '0.0000', '0.0006', '0.0000', '0.0004', '0.0003', '0.9985', '0.0000', '0.0001', '0.0000']
+
+Sample 14:
+  True Label: 8
+  Prediction: 8
+  Confidence: 0.9519
+  Correct: Yes
+  Probabilities: ['0.0009', '0.0009', '0.0211', '0.0028', '0.0020', '0.0114', '0.0012', '0.0002', '0.9519', '0.0076']
+
+Sample 15:
+  True Label: 1
+  Prediction: 1
+  Confidence: 0.9769
+  Correct: Yes
+  Probabilities: ['0.0000', '0.9769', '0.0071', '0.0051', '0.0001', '0.0004', '0.0002', '0.0008', '0.0088', '0.0006']
+
+Sample 16:
+  True Label: 8
+  Prediction: 8
+  Confidence: 0.9969
+  Correct: Yes
+  Probabilities: ['0.0000', '0.0002', '0.0011', '0.0000', '0.0000', '0.0000', '0.0011', '0.0000', '0.9969', '0.0006']
+
+Sample 17:
+  True Label: 5
+  Prediction: 4
+  Confidence: 0.5065
+  Correct: No
+  Probabilities: ['0.0005', '0.0000', '0.0635', '0.0007', '0.5065', '0.1634', '0.0228', '0.0000', '0.2417', '0.0010']
+
+Sample 18:
+  True Label: 0
+  Prediction: 0
+  Confidence: 0.9438
+  Correct: Yes
+  Probabilities: ['0.9438', '0.0000', '0.0025', '0.0031', '0.0004', '0.0439', '0.0033', '0.0001', '0.0026', '0.0003']
+
+Sample 19:
+  True Label: 1
+  Prediction: 1
+  Confidence: 0.9269
+  Correct: Yes
+  Probabilities: ['0.0000', '0.9269', '0.0186', '0.0278', '0.0000', '0.0059', '0.0146', '0.0000', '0.0061', '0.0002']
+
+Sample 20:
+  True Label: 2
+  Prediction: 2
+  Confidence: 0.8528
+  Correct: Yes
+  Probabilities: ['0.0053', '0.0007', '0.8528', '0.0213', '0.0021', '0.0034', '0.0060', '0.0542', '0.0188', '0.0354']
+

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNIST Digit Recognition - Softmax Regression</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MNIST Digit Recognition</h1>
+            <p class="subtitle">Softmax Regression Model - Machine Learning Lab 02</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Drawing Canvas Section -->
+            <div class="canvas-section">
+                <h2>Draw a Digit (0-9)</h2>
+                <div class="canvas-container">
+                    <canvas id="drawingCanvas" width="280" height="280"></canvas>
+                </div>
+                <div class="controls">
+                    <button id="clearBtn" class="btn btn-secondary">Clear Canvas</button>
+                    <button id="predictBtn" class="btn btn-primary">Predict Digit</button>
+                </div>
+                <div class="upload-section">
+                    <h3>Or Upload an Image</h3>
+                    <input type="file" id="fileInput" accept="image/*" class="file-input">
+                    <label for="fileInput" class="btn btn-upload">Choose File</label>
+                    <span id="fileName" class="file-name">No file chosen</span>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <h2>Prediction Results</h2>
+                <div id="predictionResult" class="prediction-result">
+                    <p class="no-prediction">Draw a digit and click "Predict Digit" to see results</p>
+                </div>
+                
+                <div id="probabilityBars" class="probability-bars" style="display: none;">
+                    <h3>Class Probabilities</h3>
+                    <div id="barsContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information Section -->
+        <div class="info-section">
+            <h3>About This Project</h3>
+            <div class="info-content">
+                <div class="info-card">
+                    <h4>Model</h4>
+                    <p>Softmax Regression implemented from scratch using NumPy</p>
+                </div>
+                <div class="info-card">
+                    <h4>Dataset</h4>
+                    <p>MNIST - 60,000 training images, 10,000 test images</p>
+                </div>
+                <div class="info-card">
+                    <h4>Features</h4>
+                    <p>784 features (28x28 pixel values)</p>
+                </div>
+                <div class="info-card">
+                    <h4>Classes</h4>
+                    <p>10 classes (digits 0-9)</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Machine Learning - Lab 02 | Softmax Regression Project</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

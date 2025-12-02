@@ -1,0 +1,13 @@
+Feature Engineering Comparison Results
+============================================================
+
+Feature Design            Dims       Train Acc    Test Acc     Improvement
+--------------------------------------------------------------------------------
+Normalized Pixels         784         92.11%      92.06%     baseline
+Edge Features             3136        94.60%      93.18%     +1.12%
+Block Features            64          72.36%      73.58%     -18.48%
+HOG Features              144         93.20%      93.65%     +1.59%
+Combined Features         848         92.87%      92.99%     +0.93%
+
+Best Model: HOG Features
+Best Test Accuracy: 93.65%

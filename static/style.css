@@ -1,0 +1,342 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.subtitle {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding: 40px 30px;
+}
+
+@media (max-width: 968px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.canvas-section, .results-section {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.canvas-section h2, .results-section h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.canvas-container {
+    background: white;
+    border: 3px solid #667eea;
+    border-radius: 10px;
+    display: inline-block;
+    cursor: crosshair;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+#drawingCanvas {
+    display: block;
+    border-radius: 8px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex: 1;
+    min-width: 130px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.btn-upload {
+    background: #28a745;
+    color: white;
+    display: inline-block;
+}
+
+.btn-upload:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.upload-section {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 2px solid #dee2e6;
+}
+
+.upload-section h3 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-name {
+    display: inline-block;
+    margin-left: 10px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.prediction-result {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.no-prediction {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.predicted-digit {
+    font-size: 4em;
+    font-weight: bold;
+    color: #667eea;
+    margin: 10px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.confidence {
+    font-size: 1.2em;
+    color: #495057;
+    margin-top: 10px;
+}
+
+.confidence-value {
+    font-weight: bold;
+    color: #28a745;
+}
+
+.probability-bars {
+    margin-top: 25px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.probability-bars h3 {
+    color: #495057;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.bar-item {
+    margin-bottom: 12px;
+}
+
+.bar-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #495057;
+}
+
+.bar-digit {
+    font-weight: 600;
+}
+
+.bar-percentage {
+    color: #6c757d;
+}
+
+.bar-background {
+    background: #e9ecef;
+    height: 25px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.bar-fill {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    height: 100%;
+    border-radius: 12px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    color: white;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.bar-fill.highlight {
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+
+.info-section {
+    background: #f8f9fa;
+    padding: 30px;
+    margin: 0 30px 30px 30px;
+    border-radius: 15px;
+}
+
+.info-section h3 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    text-align: center;
+}
+
+.info-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.info-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.info-card h4 {
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.info-card p {
+    color: #6c757d;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+footer {
+    background: #343a40;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9em;
+}
+
+.error-message {
+    background: #dc3545;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Animation for results */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.prediction-result.show {
+    animation: fadeInUp 0.5s ease;
+}
