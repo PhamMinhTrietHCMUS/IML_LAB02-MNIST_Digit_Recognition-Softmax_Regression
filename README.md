@@ -4,7 +4,7 @@ Handwritten digit classification using Softmax Regression on the MNIST dataset. 
 
 **Accuracy:** 92.06% (baseline) | 93.65% (HOG features)
 
-> **Note:** For detailed mathematical derivations, feature engineering explanations, and comprehensive analysis, please refer to the **[report.tex](report.tex)** file which contains the complete academic documentation.
+> **Note:** For detailed mathematical derivations, feature engineering explanations, and comprehensive analysis, please refer to the **Report** file which contains the complete academic documentation.
 
 ---
 
@@ -17,6 +17,26 @@ Handwritten digit classification using Softmax Regression on the MNIST dataset. 
 ---
 
 ## Quick Start
+
+### Quick Start (Easy Way)
+
+**For convenience, use the automated batch script:**
+
+```powershell
+run.bat
+```
+
+This interactive menu lets you:
+1. Install dependencies
+2. Train model
+3. Run web application
+4. Run all steps automatically
+
+Perfect for getting started quickly without typing commands!
+
+---
+
+### Manual Setup (Step-by-Step)
 
 ### Step 1: Install Dependencies
 
@@ -223,6 +243,7 @@ Lab/
 ├── app.py                            # Flask web server
 ├── requirements.txt                  # Python dependencies
 ├── test_setup.py                     # Setup verification
+├── run.bat                           # Automated setup & run script (Windows)
 └── README.md                         # Quick start guide (this file)
 
 ```
