@@ -201,12 +201,9 @@ Lab/
 │   └── t10k-labels.idx1-ubyte        # Test labels
 ├── app.py                            # Flask web server
 ├── requirements.txt                  # Python dependencies
-├── test_setup.py                     # Setup verification
-├── Final_Report.tex                  # Complete academic report
-└── references.bib                    # Bibliography
-```
+└── test_setup.py                     # Setup verification
 
----
+```
 
 ---
 
