@@ -340,3 +340,17 @@ footer {
 .prediction-result.show {
     animation: fadeInUp 0.5s ease;
 }
+
+/* Model card styles */
+.model-card {
+    transition: all 0.3s ease;
+}
+
+.model-card:hover {
+    transform: scale(1.03) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+}
+
+.model-card:active {
+    transform: scale(0.98) !important;
+}

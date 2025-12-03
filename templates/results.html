@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Comparison Results - MNIST</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .nav-button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card.best {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .card h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card .accuracy {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .card .dimensions {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .details-section {
+            margin-top: 40px;
+        }
+
+        .feature-detail {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .feature-detail h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .feature-detail .description {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .metric-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            color: #2c3e50;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .icon {
+            font-size: 1.5em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+        }
+
+        .confusion-matrix {
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            gap: 2px;
+            margin: 20px 0;
+            max-width: 600px;
+        }
+
+        .cm-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            border-radius: 3px;
+        }
+
+        .cm-header {
+            font-weight: bold;
+            background: #667eea;
+            color: white;
+        }
+
+        .cm-value {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Feature Design Comparison</h1>
+        <p class="subtitle">MNIST Handwritten Digit Recognition - Softmax Regression</p>
+
+        <div class="nav-buttons">
+            <a href="/" class="nav-button">🏠 Back to Drawing App</a>
+            <a href="#details" class="nav-button">📊 View Details</a>
+        </div>
+
+        {% if error %}
+        <div class="loading">
+            <p style="color: #e74c3c; font-size: 1.2em;">⚠️ {{ error }}</p>
+            <p>Please run the feature comparison first: <code>python src/compare_features.py</code></p>
+        </div>
+        {% else %}
+
+        <div class="summary-cards">
+            {% for feature in features %}
+            <div class="card {% if feature.is_best %}best{% endif %}">
+                <h3>
+                    <span class="icon">{{ feature.icon }}</span>
+                    {{ feature.name }}
+                    {% if feature.is_best %}
+                    <span class="badge">🏆 BEST</span>
+                    {% endif %}
+                </h3>
+                <div class="accuracy">{{ "%.2f"|format(feature.accuracy) }}%</div>
+                <div class="dimensions">{{ feature.dimensions }} features</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ feature.accuracy }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div id="details" class="details-section">
+            <h2 style="margin-bottom: 30px; color: #2c3e50;">📋 Detailed Analysis</h2>
+
+            {% for feature in features %}
+            <div class="feature-detail">
+                <h3>{{ feature.icon }} {{ feature.name }}</h3>
+                <div class="description">{{ feature.description }}</div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">Accuracy</div>
+                        <div class="metric-value">{{ "%.2f"|format(feature.accuracy) }}%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Dimensions</div>
+                        <div class="metric-value">{{ feature.dimensions }}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Avg Precision</div>
+                        <div class="metric-value">{{ "%.4f"|format(feature.avg_precision) }}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Avg Recall</div>
+                        <div class="metric-value">{{ "%.4f"|format(feature.avg_recall) }}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Avg F1-Score</div>
+                        <div class="metric-value">{{ "%.4f"|format(feature.avg_f1) }}</div>
+                    </div>
+                </div>
+
+                {% if feature.confusion_matrix %}
+                <h4 style="margin-top: 20px; margin-bottom: 10px;">Confusion Matrix (First 10 samples)</h4>
+                <div class="confusion-matrix">
+                    <div class="cm-cell cm-header"></div>
+                    {% for i in range(10) %}
+                    <div class="cm-cell cm-header">{{ i }}</div>
+                    {% endfor %}
+                    
+                    {% for i in range(10) %}
+                    <div class="cm-cell cm-header">{{ i }}</div>
+                    {% for j in range(10) %}
+                    <div class="cm-cell cm-value" style="background: rgba(102, 126, 234, {{ feature.confusion_matrix[i][j] / feature.confusion_matrix[i]|sum }});">
+                        {{ feature.confusion_matrix[i][j] }}
+                    </div>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 40px;">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">📊 Performance Comparison Table</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature Design</th>
+                        <th>Dimensions</th>
+                        <th>Accuracy</th>
+                        <th>Avg Precision</th>
+                        <th>Avg Recall</th>
+                        <th>Avg F1-Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feature in features %}
+                    <tr {% if feature.is_best %}style="background: #fff3cd; font-weight: 600;"{% endif %}>
+                        <td>{{ feature.icon }} {{ feature.name }}</td>
+                        <td>{{ feature.dimensions }}</td>
+                        <td>{{ "%.2f"|format(feature.accuracy) }}%</td>
+                        <td>{{ "%.4f"|format(feature.avg_precision) }}</td>
+                        <td>{{ "%.4f"|format(feature.avg_recall) }}</td>
+                        <td>{{ "%.4f"|format(feature.avg_f1) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #e8f4f8; border-radius: 10px; border-left: 5px solid #3498db;">
+            <h3 style="color: #2c3e50; margin-bottom: 15px;">💡 Key Findings</h3>
+            <ul style="color: #555; line-height: 2;">
+                <li><strong>Best Performance:</strong> {{ best_feature.name }} achieved {{ "%.2f"|format(best_feature.accuracy) }}% accuracy</li>
+                <li><strong>Feature Engineering:</strong> Polynomial features increased dimensionality from 784 to 1568, capturing non-linear relationships</li>
+                <li><strong>HOG Features:</strong> Gradient-based features preserve edge information while maintaining the same dimensionality</li>
+                <li><strong>Optimization:</strong> All models used Adam optimizer with learning rate 0.001 for fair comparison</li>
+            </ul>
+        </div>
+
+        {% endif %}
+    </div>
+</body>
+</html>

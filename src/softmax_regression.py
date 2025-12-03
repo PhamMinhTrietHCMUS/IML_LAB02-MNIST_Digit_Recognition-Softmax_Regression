@@ -21,11 +21,12 @@ class SoftmaxRegression:
         L2 regularization parameter
     """
     
-    def __init__(self, learning_rate=0.1, num_iterations=1000, batch_size=128, reg_lambda=0.01):
+    def __init__(self, learning_rate=0.001, num_iterations=1000, batch_size=128, reg_lambda=0.01, optimizer='adam'):
         self.learning_rate = learning_rate
         self.num_iterations = num_iterations
         self.batch_size = batch_size
         self.reg_lambda = reg_lambda
+        self.optimizer = optimizer
         self.weights = None
         self.bias = None
         self.num_classes = None
@@ -142,11 +143,26 @@ class SoftmaxRegression:
         self.weights = np.random.randn(self.num_features, self.num_classes) * 0.01
         self.bias = np.zeros(self.num_classes)
         
+        # Adam optimizer parameters
+        if self.optimizer == 'adam':
+            beta1 = 0.9
+            beta2 = 0.999
+            epsilon = 1e-8
+            m_w, v_w = np.zeros_like(self.weights), np.zeros_like(self.weights)
+            m_b, v_b = np.zeros_like(self.bias), np.zeros_like(self.bias)
+            t = 0
+        
         # Convert labels to one-hot encoding
         y_train_one_hot = np.eye(self.num_classes)[y_train]
         
         # Training loop
+        current_lr = self.learning_rate
+        
         for iteration in range(self.num_iterations):
+            # Learning rate decay (StepLR equivalent)
+            if iteration > 0 and iteration % 100 == 0:
+                current_lr *= 0.95
+                
             # Mini-batch gradient descent
             indices = np.random.permutation(num_samples)
             
@@ -165,8 +181,25 @@ class SoftmaxRegression:
                 dW, db = self._compute_gradients(X_batch, y_batch, probs)
                 
                 # Update parameters
-                self.weights -= self.learning_rate * dW
-                self.bias -= self.learning_rate * db
+                if self.optimizer == 'adam':
+                    t += 1
+                    # Update weights
+                    m_w = beta1 * m_w + (1 - beta1) * dW
+                    v_w = beta2 * v_w + (1 - beta2) * (dW ** 2)
+                    m_w_hat = m_w / (1 - beta1 ** t)
+                    v_w_hat = v_w / (1 - beta2 ** t)
+                    self.weights -= current_lr * m_w_hat / (np.sqrt(v_w_hat) + epsilon)
+                    
+                    # Update bias
+                    m_b = beta1 * m_b + (1 - beta1) * db
+                    v_b = beta2 * v_b + (1 - beta2) * (db ** 2)
+                    m_b_hat = m_b / (1 - beta1 ** t)
+                    v_b_hat = v_b / (1 - beta2 ** t)
+                    self.bias -= current_lr * m_b_hat / (np.sqrt(v_b_hat) + epsilon)
+                else:
+                    # Standard SGD
+                    self.weights -= current_lr * dW
+                    self.bias -= current_lr * db
             
             # Compute loss and accuracy every 10 iterations
             if iteration % 10 == 0 or iteration == self.num_iterations - 1:

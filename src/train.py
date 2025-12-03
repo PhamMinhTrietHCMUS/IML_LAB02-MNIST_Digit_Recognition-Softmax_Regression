@@ -12,7 +12,8 @@ from softmax_regression import SoftmaxRegression
 from data_loader import (
     load_mnist_data,
     preprocess_images,
-    split_train_val
+    split_train_val,
+    create_polynomial_features
 )
 
 
@@ -264,6 +265,11 @@ def main():
     X_train = preprocess_images(X_train_raw, normalize=True, flatten=True)
     X_test = preprocess_images(X_test_raw, normalize=True, flatten=True)
     
+    # Create polynomial features (degree=2)
+    print("   Creating polynomial features (degree=2)...")
+    X_train = create_polynomial_features(X_train, degree=2)
+    X_test = create_polynomial_features(X_test, degree=2)
+    
     print(f"Training data shape: {X_train.shape}")
     print(f"Test data shape: {X_test.shape}")
     
@@ -282,10 +288,11 @@ def main():
     print("-" * 60)
     
     model = SoftmaxRegression(
-        learning_rate=0.1,
+        learning_rate=0.001,  # Lower learning rate for Adam
         num_iterations=500,
         batch_size=128,
-        reg_lambda=0.001
+        reg_lambda=0.001,
+        optimizer='adam'
     )
     
     model.fit(X_train_split, y_train_split, X_val, y_val, verbose=True)
