@@ -5,6 +5,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MNIST Digit Recognition - Softmax Regression</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Feature Comparison Styles */
+        .feature-comparison {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .feature-comparison h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card.best {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card .accuracy {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .feature-card .dimensions {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .feature-card .description {
+            margin-top: 15px;
+            font-size: 0.95em;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .feature-card.best .progress-fill {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .comparison-table tr.best-row {
+            background: #fff3cd;
+            font-weight: 600;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metric-item {
+            background: rgba(255,255,255,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .feature-card.best .metric-item {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .metric-value {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .no-results-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .no-results-message code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .key-findings {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d4e8f0 100%);
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+
+        .key-findings h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .key-findings ul {
+            color: #555;
+            line-height: 2;
+            margin-left: 20px;
+        }
+
+        .key-findings strong {
+            color: #2c3e50;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -46,6 +241,96 @@
             </div>
         </div>
 
+        <!-- Feature Comparison Section -->
+        <div class="feature-comparison">
+            <h2>🎯 Feature Design Comparison</h2>
+            
+            {% if features_error %}
+            <div class="no-results-message">
+                <p style="color: #e74c3c; font-size: 1.2em; margin-bottom: 10px;">⚠️ {{ features_error }}</p>
+                <p>Please run the feature comparison first:</p>
+                <code>python src/compare_features.py</code>
+            </div>
+            {% elif features %}
+            
+            <div class="comparison-cards">
+                {% for feature in features %}
+                <div class="feature-card {% if feature.is_best %}best{% endif %}">
+                    <h3>
+                        <span>{{ feature.icon }}</span>
+                        {{ feature.name }}
+                        {% if feature.is_best %}
+                        <span class="badge">🏆 BEST</span>
+                        {% endif %}
+                    </h3>
+                    <div class="accuracy">{{ "%.2f"|format(feature.accuracy) }}%</div>
+                    <div class="dimensions">{{ feature.dimensions }} features</div>
+                    <div class="description">{{ feature.description }}</div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-label">Precision</div>
+                            <div class="metric-value">{{ "%.3f"|format(feature.avg_precision) }}</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Recall</div>
+                            <div class="metric-value">{{ "%.3f"|format(feature.avg_recall) }}</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">F1-Score</div>
+                            <div class="metric-value">{{ "%.3f"|format(feature.avg_f1) }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ feature.accuracy }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <h3 style="margin-top: 40px; margin-bottom: 20px; color: #2c3e50;">📊 Detailed Comparison</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature Design</th>
+                        <th>Dimensions</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1-Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feature in features %}
+                    <tr {% if feature.is_best %}class="best-row"{% endif %}>
+                        <td>{{ feature.icon }} {{ feature.name }}</td>
+                        <td>{{ feature.dimensions }}</td>
+                        <td><strong>{{ "%.2f"|format(feature.accuracy) }}%</strong></td>
+                        <td>{{ "%.4f"|format(feature.avg_precision) }}</td>
+                        <td>{{ "%.4f"|format(feature.avg_recall) }}</td>
+                        <td>{{ "%.4f"|format(feature.avg_f1) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if best_feature %}
+            <div class="key-findings">
+                <h3>💡 Key Findings</h3>
+                <ul>
+                    <li><strong>Best Performance:</strong> {{ best_feature.name }} achieved {{ "%.2f"|format(best_feature.accuracy) }}% accuracy with {{ best_feature.dimensions }} features</li>
+                    <li><strong>Raw Pixels:</strong> Simple baseline using direct pixel intensities (784 features)</li>
+                    <li><strong>Polynomial Features:</strong> Captures non-linear relationships by adding squared terms (1568 features)</li>
+                    <li><strong>HOG Features:</strong> Gradient-based features preserve edge information (784 features)</li>
+                    <li><strong>Optimization:</strong> All models trained with Adam optimizer (lr=0.001) for fair comparison</li>
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% endif %}
+        </div>
+
         <!-- Information Section -->
         <div class="info-section">
             <h3>About This Project</h3>
@@ -60,7 +345,7 @@
                 </div>
                 <div class="info-card">
                     <h4>Features</h4>
-                    <p>784 features (28x28 pixel values)</p>
+                    <p>Multiple feature designs: Raw Pixels, Polynomial, HOG</p>
                 </div>
                 <div class="info-card">
                     <h4>Classes</h4>

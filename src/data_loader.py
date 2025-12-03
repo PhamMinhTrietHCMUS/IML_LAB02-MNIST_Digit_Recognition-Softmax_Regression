@@ -306,7 +306,7 @@ def preprocess_single_image(image, target_size=(28, 28)):
     preprocessed : numpy array of shape (1, num_features)
         Preprocessed image ready for prediction
     """
-    from PIL import Image
+    from PIL import Image, ImageFilter
     
     # Convert to PIL Image if needed
     if not isinstance(image, Image.Image):
@@ -315,19 +315,116 @@ def preprocess_single_image(image, target_size=(28, 28)):
     # Convert to grayscale
     image = image.convert('L')
     
-    # Resize to target size
-    image = image.resize(target_size, Image.Resampling.LANCZOS)
-    
-    # Convert to numpy array
+    # Convert to numpy array to check inversion
     img_array = np.array(image)
     
     # Invert colors if needed (MNIST has white digits on black background)
     # Check if the image has more white than black
     if np.mean(img_array) > 127:
         img_array = 255 - img_array
+        image = Image.fromarray(img_array)
+    
+    # --- ADVANCED PREPROCESSING (MNIST Style with thin pen support) ---
+    img_array = np.array(image)
+    
+    # 1. Find bounding box of the digit
+    coords = cv2_get_bbox(img_array)
+    
+    if coords:
+        x, y, w, h = coords
+        # Crop the digit
+        digit = image.crop((x, y, x+w, y+h))
+        
+        # 2. Resize to fit in 20x20 box (keeping aspect ratio)
+        width, height = digit.size
+        if width > height:
+            new_w = 20
+            new_h = max(1, int(height * (20 / width)))
+        else:
+            new_h = 20
+            new_w = max(1, int(width * (20 / height)))
+        
+        digit = digit.resize((new_w, new_h), Image.Resampling.LANCZOS)
+        
+        # --- MINIMAL PREPROCESSING (Keep original shape) ---
+        digit_arr = np.array(digit).astype(np.uint8)
+        
+        # 3. Paste into 28x28 using Center of Mass (with limited shift)
+        new_image = Image.new('L', target_size, 0)
+        
+        # Calculate geometric center position first
+        geo_paste_x = (target_size[0] - new_w) // 2
+        geo_paste_y = (target_size[1] - new_h) // 2
+        
+        # Create temp canvas to calculate CoM
+        temp_canvas = Image.new('L', target_size, 0)
+        temp_canvas.paste(digit, (geo_paste_x, geo_paste_y))
+        temp_arr = np.array(temp_canvas)
+        
+        # Calculate Center of Mass
+        cy, cx = get_center_of_mass(temp_arr)
+        
+        # Calculate shift (limit to max 2 pixels to prevent distortion)
+        shift_x = np.clip(14 - cx, -2, 2)
+        shift_y = np.clip(14 - cy, -2, 2)
+        
+        # Apply minimal shift
+        final_paste_x = int(geo_paste_x + shift_x)
+        final_paste_y = int(geo_paste_y + shift_y)
+        
+        new_image.paste(digit, (final_paste_x, final_paste_y))
+        
+        image = new_image
+        img_array = np.array(image)
+    else:
+        # Fallback if no digit found (empty canvas)
+        image = image.resize(target_size, Image.Resampling.LANCZOS)
+        img_array = np.array(image)
     
     # Normalize and flatten
     img_normalized = img_array.astype(np.float32) / 255.0
     img_flattened = img_normalized.reshape(1, -1)
     
     return img_flattened
+
+
+def get_center_of_mass(img):
+    """
+    Calculate center of mass of an image
+    """
+    total_mass = np.sum(img)
+    if total_mass == 0:
+        return 14, 14
+    
+    rows, cols = img.shape
+    y_coords, x_coords = np.mgrid[0:rows, 0:cols]
+    
+    cy = np.sum(y_coords * img) / total_mass
+    cx = np.sum(x_coords * img) / total_mass
+    
+    return cy, cx
+
+
+def cv2_get_bbox(img_array):
+    """
+    Helper to find bounding box of digit using simple thresholding
+    Simulates cv2.boundingRect without needing opencv
+    """
+    # Threshold to find non-zero pixels
+    rows = np.any(img_array > 50, axis=1)
+    cols = np.any(img_array > 50, axis=0)
+    
+    if not np.any(rows) or not np.any(cols):
+        return None
+        
+    ymin, ymax = np.where(rows)[0][[0, -1]]
+    xmin, xmax = np.where(cols)[0][[0, -1]]
+    
+    # Add a small padding
+    h, w = img_array.shape
+    ymin = max(0, ymin - 2)
+    ymax = min(h, ymax + 2)
+    xmin = max(0, xmin - 2)
+    xmax = min(w, xmax + 2)
+    
+    return xmin, ymin, xmax-xmin, ymax-ymin

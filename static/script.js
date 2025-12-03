@@ -9,7 +9,7 @@ let lastY = 0;
 ctx.fillStyle = 'white';
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 ctx.strokeStyle = 'black';
-ctx.lineWidth = 20;
+ctx.lineWidth = 20; // Original thin pen size
 ctx.lineCap = 'round';
 ctx.lineJoin = 'round';
 
@@ -181,26 +181,124 @@ function displayResults(result) {
     const probabilityBars = document.getElementById('probabilityBars');
     const barsContainer = document.getElementById('barsContainer');
     
-    // Display main prediction
-    const confidencePercent = (result.confidence * 100).toFixed(2);
-    resultDiv.innerHTML = `
-        <h3 style="color: #495057; margin-bottom: 15px;">Predicted Digit</h3>
-        <div class="predicted-digit">${result.prediction}</div>
-        <div class="confidence">
-            Confidence: <span class="confidence-value">${confidencePercent}%</span>
-        </div>
+    // Check if we have multiple models
+    if (result.models && result.models.length > 0) {
+        // Store models data globally for click handlers
+        window.currentModels = result.models;
+        window.selectedModelIndex = 0; // Default to first model
+        
+        // Display predictions from all models
+        let modelsHTML = '<h3 style="color: #495057; margin-bottom: 20px;">🎯 Predictions from All Models <span style="font-size: 0.7em; color: #7f8c8d;">(Click to view probabilities)</span></h3>';
+        modelsHTML += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">';
+        
+        result.models.forEach((model, index) => {
+            const confidencePercent = (model.confidence * 100).toFixed(2);
+            const borderColor = model.color || '#3498db';
+            modelsHTML += `
+                <div class="model-card" data-model-index="${index}" style="border: 3px solid ${borderColor}; border-radius: 15px; padding: 20px; text-align: center; background: linear-gradient(135deg, #ffffff 0%, ${borderColor}15 100%); cursor: pointer; transition: all 0.3s;">
+                    <div style="font-size: 2em; margin-bottom: 5px;">${model.icon}</div>
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 10px;">${model.name}</div>
+                    <div style="font-size: 3em; font-weight: bold; color: ${borderColor}; margin: 10px 0;">${model.prediction}</div>
+                    <div style="font-size: 0.9em; color: #7f8c8d;">Confidence: <strong>${confidencePercent}%</strong></div>
+                    <div style="margin-top: 10px; font-size: 0.8em; color: #3498db;">👆 Click to view details</div>
+                </div>
+            `;
+        });
+        
+        modelsHTML += '</div>';
+        
+        // Check if all models agree
+        const predictions = result.models.map(m => m.prediction);
+        const allAgree = predictions.every(p => p === predictions[0]);
+        
+        if (allAgree) {
+            modelsHTML += '<div style="background: #d4edda; border: 2px solid #28a745; border-radius: 10px; padding: 15px; text-align: center; color: #155724; font-weight: 600;">✅ All models agree! High confidence prediction.</div>';
+        } else {
+            modelsHTML += '<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 10px; padding: 15px; text-align: center; color: #856404; font-weight: 600;">⚠️ Models disagree. Click each model to compare probabilities.</div>';
+        }
+        
+        resultDiv.innerHTML = modelsHTML;
+        resultDiv.classList.add('show');
+        
+        // Add click handlers to model cards
+        document.querySelectorAll('.model-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const modelIndex = parseInt(this.getAttribute('data-model-index'));
+                window.selectedModelIndex = modelIndex;
+                
+                // Highlight selected card
+                document.querySelectorAll('.model-card').forEach(c => {
+                    c.style.transform = 'scale(1)';
+                    c.style.boxShadow = 'none';
+                });
+                this.style.transform = 'scale(1.05)';
+                this.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+                
+                // Update probability bars
+                updateProbabilityBars(window.currentModels[modelIndex]);
+            });
+        });
+        
+        // Display probability bars for the first model initially
+        updateProbabilityBars(result.models[0]);
+    } else {
+        // Fallback to single model display
+        const confidencePercent = (result.confidence * 100).toFixed(2);
+        resultDiv.innerHTML = `
+            <h3 style="color: #495057; margin-bottom: 15px;">Predicted Digit</h3>
+            <div class="predicted-digit">${result.prediction}</div>
+            <div class="confidence">
+                Confidence: <span class="confidence-value">${confidencePercent}%</span>
+            </div>
+        `;
+        resultDiv.classList.add('show');
+        
+        // Display probability bars
+        barsContainer.innerHTML = '';
+        const probabilities = result.probabilities;
+        
+        for (let i = 0; i < 10; i++) {
+            const prob = probabilities[i.toString()];
+            const percentage = (prob * 100).toFixed(1);
+            const isMax = i === result.prediction;
+            
+            const barItem = document.createElement('div');
+            barItem.className = 'bar-item';
+            barItem.innerHTML = `
+                <div class="bar-label">
+                    <span class="bar-digit">Digit ${i}</span>
+                    <span class="bar-percentage">${percentage}%</span>
+                </div>
+                <div class="bar-background">
+                    <div class="bar-fill ${isMax ? 'highlight' : ''}" style="width: ${percentage}%">
+                        ${percentage > 5 ? percentage + '%' : ''}
+                    </div>
+                </div>
+            `;
+            barsContainer.appendChild(barItem);
+        }
+    }
+    
+    probabilityBars.style.display = 'block';
+}
+
+function updateProbabilityBars(model) {
+    const barsContainer = document.getElementById('barsContainer');
+    const probabilityBars = document.getElementById('probabilityBars');
+    
+    // Clear and update with selected model's probabilities
+    barsContainer.innerHTML = `
+        <h4 style="margin-bottom: 15px; color: #495057;">
+            ${model.icon} ${model.name} - Detailed Probabilities
+        </h4>
     `;
-    resultDiv.classList.add('show');
     
-    // Display probability bars
-    barsContainer.innerHTML = '';
-    const probabilities = result.probabilities;
+    const probabilities = model.probabilities;
     
-    // Create bars for each digit
     for (let i = 0; i < 10; i++) {
         const prob = probabilities[i.toString()];
         const percentage = (prob * 100).toFixed(1);
-        const isMax = i === result.prediction;
+        const isMax = i === model.prediction;
         
         const barItem = document.createElement('div');
         barItem.className = 'bar-item';
@@ -210,7 +308,7 @@ function displayResults(result) {
                 <span class="bar-percentage">${percentage}%</span>
             </div>
             <div class="bar-background">
-                <div class="bar-fill ${isMax ? 'highlight' : ''}" style="width: ${percentage}%">
+                <div class="bar-fill ${isMax ? 'highlight' : ''}" style="width: ${percentage}%; background: ${model.color};">
                     ${percentage > 5 ? percentage + '%' : ''}
                 </div>
             </div>
@@ -226,6 +324,8 @@ function clearResults() {
     resultDiv.innerHTML = '<p class="no-prediction">Draw a digit and click "Predict Digit" to see results</p>';
     resultDiv.classList.remove('show');
     document.getElementById('probabilityBars').style.display = 'none';
+    window.currentModels = null;
+    window.selectedModelIndex = 0;
 }
 
 function showError(message) {
