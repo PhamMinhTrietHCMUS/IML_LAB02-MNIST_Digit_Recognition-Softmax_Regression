@@ -4,6 +4,8 @@ Handwritten digit classification using Softmax Regression on the MNIST dataset. 
 
 **Accuracy:** 92.06% (baseline) | 93.65% (HOG features)
 
+> **Note:** For detailed mathematical derivations, feature engineering explanations, and comprehensive analysis, please refer to the **[report.tex](report.tex)** file which contains the complete academic documentation.
+
 ---
 
 ## Prerequisites
@@ -105,6 +107,8 @@ Open browser to **http://localhost:5000**
 
 ## Advanced: Feature Engineering Experiments
 
+> **Feature Design Details:** For detailed explanations of each feature extraction method, visual transformations, and rationale, see **Section 4** of [report.tex](report.tex).
+
 Compare 5 different feature extraction methods:
 
 ```powershell
@@ -112,13 +116,18 @@ python src/feature_experiments.py
 ```
 
 **Results:**
-- Normalized Pixels: 92.06% (baseline)
-- Edge Detection: 93.18% (+1.12%)
-- **HOG Features: 93.65%** (+1.59% - best)
-- Block Averaging: 73.58% (-18.48%)
-- Combined Features: 92.99% (+0.93%)
+- Normalized Pixels: 92.06% (baseline) - 784 dimensions
+- Edge Detection: 93.18% (+1.12%) - 3,136 dimensions
+- **HOG Features: 93.65%** (+1.59% - best) - 144 dimensions
+- Block Averaging: 73.58% (-18.48%) - 64 dimensions
+- Combined Features: 92.99% (+0.93%) - 848 dimensions
 
 **Training time:** 10-15 minutes for all experiments
+
+**Key Findings:**
+- HOG features achieve best accuracy with optimal dimensionality
+- Edge features improve accuracy but significantly increase computation
+- Block averaging trades too much accuracy for speed
 
 ---
 
@@ -183,17 +192,29 @@ Lab/
 │   ├── softmax_regression.py         # Softmax model class
 │   ├── data_loader.py                # MNIST loader & feature extraction
 │   ├── train.py                      # Training script
-│   └── feature_experiments.py        # Feature comparison
+│   ├── feature_experiments.py        # Feature comparison (5 designs)
+│   ├── compare_features.py           # Alternative comparison script
+│   └── evaluation.py                 # Evaluation metrics
 ├── templates/index.html              # Web interface
 ├── static/                           # CSS & JavaScript
 │   ├── style.css                     # Styling
 │   └── script.js                     # Canvas & API calls
 ├── models/                           # Generated after training
-│   ├── softmax_model.npz             # Trained weights & biases
-│   ├── classification_metrics.txt    # Precision/Recall/F1
-│   ├── confusion_matrix.csv          # 10×10 confusion matrix
+│   ├── softmax_model.npz             # Main trained model
+│   ├── softmax_model_raw.npz         # Raw pixel features model
+│   ├── softmax_model_poly.npz        # Polynomial features model
+│   ├── softmax_model_hog.npz         # HOG features model
+│   ├── classification_metrics.txt    # Main model metrics
+│   ├── raw_classification_metrics.txt# Raw features metrics
+│   ├── poly_classification_metrics.txt# Polynomial features metrics
+│   ├── hog_classification_metrics.txt# HOG features metrics
+│   ├── confusion_matrix.csv          # Main confusion matrix
+│   ├── raw_confusion_matrix.csv      # Raw features confusion matrix
+│   ├── poly_confusion_matrix.csv     # Polynomial features confusion matrix
+│   ├── hog_confusion_matrix.csv      # HOG features confusion matrix
 │   ├── training_history.txt          # Loss & accuracy per epoch
-│   └── feature_comparison.txt        # Feature experiments results
+│   ├── predictions.txt               # Sample predictions
+│   └── feature_comparison.txt        # Feature comparison results
 ├── archive_2/                        # MNIST dataset (included)
 │   ├── train-images.idx3-ubyte       # 60,000 training images
 │   ├── train-labels.idx1-ubyte       # Training labels
@@ -201,7 +222,8 @@ Lab/
 │   └── t10k-labels.idx1-ubyte        # Test labels
 ├── app.py                            # Flask web server
 ├── requirements.txt                  # Python dependencies
-└── test_setup.py                     # Setup verification
+├── test_setup.py                     # Setup verification
+└── README.md                         # Quick start guide (this file)
 
 ```
 
@@ -241,6 +263,10 @@ Lab/
 ## Technical Details
 
 ### Mathematical Foundation
+
+> **For complete mathematical derivations** including step-by-step gradient computation, softmax derivation, and optimization details, see **Section 3** of [report.tex](report.tex).
+
+**Key Formulas:**
 
 **Softmax Function:**
 $$P(y = k | x) = \frac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}}$$
@@ -296,12 +322,21 @@ Server health check
 
 ```
 models/
-├── softmax_model.npz              # Trained weights (W, b)
+├── softmax_model.npz              # Main trained model (default/polynomial features)
+├── softmax_model_raw.npz          # Raw pixel features model
+├── softmax_model_poly.npz         # Polynomial features model
+├── softmax_model_hog.npz          # HOG features model
 ├── training_history.txt           # Loss & accuracy per epoch
 ├── predictions.txt                # Sample predictions analysis
-├── confusion_matrix.csv           # 10×10 confusion matrix
-├── classification_metrics.txt     # Per-class precision/recall/F1
-└── feature_comparison.txt         # Feature experiments results (if run)
+├── confusion_matrix.csv           # Main model confusion matrix
+├── raw_confusion_matrix.csv       # Raw features confusion matrix
+├── poly_confusion_matrix.csv      # Polynomial features confusion matrix
+├── hog_confusion_matrix.csv       # HOG features confusion matrix
+├── classification_metrics.txt     # Main model per-class metrics
+├── raw_classification_metrics.txt # Raw features metrics
+├── poly_classification_metrics.txt# Polynomial features metrics
+├── hog_classification_metrics.txt # HOG features metrics
+└── feature_comparison.txt         # Feature experiments comparison
 ```
 
 ---
@@ -361,16 +396,34 @@ After training:
 
 ## Documentation
 
-- **README.md** - This file (quick start & reference)
-- **Final_Report.tex** - Complete academic report with mathematical derivations
-- **references.bib** - Bibliography with 30+ citations
+- **README.md** - This file (quick start guide)
 - **test_setup.py** - System verification and diagnostics
+
+---
+
+## Lab Requirements Compliance
+
+**Manual Implementation** - Pure NumPy (no TensorFlow/PyTorch/scikit-learn)  
+**Mathematical Derivations** - Complete formulas in report.tex  
+**Feature Engineering** - 5 different designs (exceeds requirement of 3)  
+**Feature Explanations** - Detailed mechanism and rationale in report.tex  
+**Evaluation Metrics** - Accuracy, Precision, Recall, F1-score, Confusion Matrix  
+**Performance Comparison** - All features compared and analyzed  
+**Results Interpretation** - Detailed discussion based on observations  
+**Web Application** - Interactive digit recognition interface
 
 ---
 
 ## Contact
 
-For questions or issues: pmtriet23@clc.fitus.edu.vn
+**Course:** Machine Learning - Lab 02  
+**Authors:**  
+- Dang Anh Kiet - 23127077
+- Pham Minh Triet - 23127132
+- Tran Quang Phuc - 23127302
+- Kieu Duy Hieu - 23127365
+
+**Email:** pmtriet23@clc.fitus.edu.vn
 
 ---
 
